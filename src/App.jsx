@@ -1,15 +1,26 @@
 // App.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import Column from './components/Column';
 import { v4 as uuidv4 } from 'uuid';
 
 function App() {
-    const [columns, setColumns] = useState({
-        todo: [],
-        inProgress: [],
-        done: [],
+    // Cargar columnas desde localStorage o usar el estado inicial
+    const [columns, setColumns] = useState(() => {
+        const saved = localStorage.getItem('kanban-columns');
+        return saved
+            ? JSON.parse(saved)
+            : {
+                  todo: [],
+                  inProgress: [],
+                  done: [],
+              };
     });
+
+    // Guardar columnas en localStorage cada vez que cambian
+    useEffect(() => {
+        localStorage.setItem('kanban-columns', JSON.stringify(columns));
+    }, [columns]);
 
     const handleDragEnd = (event) => {
         const { active, over } = event;
